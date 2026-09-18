@@ -1,0 +1,56 @@
+# Java / Maven
+**/target/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.log
+**/.mvn/wrapper/maven-wrapper.jar
+
+# Node.js / Next.js
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Unreal Engine generated files
+Simulation/Binaries/
+Simulation/DerivedDataCache/
+Simulation/Intermediate/
+Simulation/Saved/
+Simulation/.vs/
+Simulation/*.sln
+Simulation/*.xcodeproj
+Simulation/*.xcworkspace
+
+# Native build artifacts
+*.pdb
+*.lib
+*.exp
+*.obj
+*.ilk
+*.map
+
+# IDE and OS files
+.idea/
+.vscode/settings.json
+.vs/
+*.iml
+*.user
+*.suo
+*.cache
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local configuration and data
+.env
+.env.*
+!.env.example
+**/data/
+
+# Temporary files
+temp-*.txt
+*.patch.jsonb
+build_output.txt
+build_errors.txt
