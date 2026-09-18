@@ -13,7 +13,7 @@ services:
     environment:
       POSTGRES_DB: ${AUTH_POSTGRES_DB:-auth_db}
       POSTGRES_USER: ${AUTH_POSTGRES_USER:-auth}
-      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD:-auth_pass}
+      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD:-change-this-auth-password}
     volumes:
       - auth_postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -34,7 +34,7 @@ services:
     environment:
       POSTGRES_DB: ${WAREHOUSE_POSTGRES_DB:-warehouse_db}
       POSTGRES_USER: ${WAREHOUSE_POSTGRES_USER:-warehouse}
-      POSTGRES_PASSWORD: ${WAREHOUSE_POSTGRES_PASSWORD:-warehouse_pass}
+      POSTGRES_PASSWORD: ${WAREHOUSE_POSTGRES_PASSWORD:-change-this-warehouse-password}
     volumes:
       - warehouse_postgres_data:/var/lib/postgresql/data
       - ./scripts/seed-warehouse.sql:/docker-entrypoint-initdb.d/seed-warehouse.sql:ro
@@ -159,7 +159,7 @@ services:
       SERVER_PORT: 8081
       SPRING_DATASOURCE_URL: jdbc:postgresql://warehouse-db:5432/${WAREHOUSE_POSTGRES_DB:-warehouse_db}
       SPRING_DATASOURCE_USERNAME: ${WAREHOUSE_POSTGRES_USER:-warehouse}
-      SPRING_DATASOURCE_PASSWORD: ${WAREHOUSE_POSTGRES_PASSWORD:-warehouse_pass}
+      SPRING_DATASOURCE_PASSWORD: ${WAREHOUSE_POSTGRES_PASSWORD:-change-this-warehouse-password}
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER:-smartlogistics}
@@ -260,8 +260,8 @@ services:
       SPRING_APPLICATION_NAME: ms-identity
       SPRING_DATASOURCE_URL: jdbc:postgresql://auth-db:5432/${AUTH_POSTGRES_DB:-auth_db}
       SPRING_DATASOURCE_USERNAME: ${AUTH_POSTGRES_USER:-auth}
-      SPRING_DATASOURCE_PASSWORD: ${AUTH_POSTGRES_PASSWORD:-auth_pass}
-      JWT_SECRET: ${JWT_SECRET:-smartlogistic-secret-key-change-in-production}
+      SPRING_DATASOURCE_PASSWORD: ${AUTH_POSTGRES_PASSWORD:-change-this-auth-password}
+      JWT_SECRET: ${JWT_SECRET:-change-this-jwt-secret-before-starting}
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: prometheus,health,info
       MANAGEMENT_TRACING_SAMPLING_PROBABILITY: "1.0"
       MANAGEMENT_OTLP_TRACING_ENDPOINT: http://otel-collector:4318/v1/traces
@@ -305,7 +305,7 @@ services:
       - "${GRAFANA_PORT:-3001}:3000"
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-change-this-grafana-password}
       GF_INSTALL_PLUGINS: "jaeger"
     volumes:
       - ./observability/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
