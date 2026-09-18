@@ -15,6 +15,27 @@ The project is organized as a monorepo so each subsystem can be developed and te
 - Prometheus, Grafana, Loki, OpenTelemetry, and Jaeger observability.
 - Unreal Engine visualization connected to the operational platform.
 
+## Architecture
+
+```text
+Next.js dashboard
+        |
+        v
+Nginx API gateway ---- ms-identity ---- PostgreSQL
+        |
+        +------------ ms-warehouse-core ---- PostgreSQL
+        |                       |
+        |                       +---------- RabbitMQ ---------- ms-logistics-analytics ---- MongoDB
+        |                                    |
+        +------------ ms-robot-status -------+---- Unreal Engine simulation
+                              |
+                             Redis
+```
+
+The warehouse service handles orders, inventory, layout data, route planning, and the outbox publisher. The robot service manages current fleet state and live telemetry. Analytics consumes completed-route events without blocking operational flows.
+
+Detailed C4 diagrams are available in [`docs/`](docs/).
+
 ## Repository Layout
 
 ```text
@@ -34,21 +55,23 @@ smartlogistics-practice/
 
 ## Quick Start
 
+Copy the example configuration and change every development secret before starting the stack:
+
 ```bash
 cd smartlogistic
 cp .env.example .env
 docker compose up --build -d
 ```
 
-The web dashboard is developed separately:
+The backend gateway is available at `http://localhost:8086`. The web dashboard runs separately during development:
 
 ```bash
 cd smartlogistic-web
-npm install
+npm ci
 npm run dev
 ```
 
-The dashboard is available at `http://localhost:3000` and the API gateway at `http://localhost:8086` by default.
+The dashboard is available at `http://localhost:3000`.
 
 ## Services
 
@@ -60,10 +83,45 @@ The dashboard is available at `http://localhost:3000` and the API gateway at `ht
 | `ms-logistics-analytics` | 8083 | Route events and congestion analytics |
 | Nginx gateway | 8086 | API routing and authentication boundary |
 | Next.js dashboard | 3000 | Operations interface |
+| Grafana | 3001 | Dashboards and log exploration |
+| RabbitMQ management | 15672 | Broker administration |
+| Jaeger | 16686 | Distributed traces |
 
 ## Development Workflow
 
-The default integration branch is `dev`. Feature branches should be opened against `dev`, tested locally, and merged through pull requests. Stable milestones are promoted from `dev` to `main` through a release pull request.
+The default integration branch is `dev`. Feature branches are opened from `dev`, tested locally, and merged through pull requests. Stable milestones are promoted from `dev` to `main` through release pull requests instead of waiting for the entire roadmap.
+
+Suggested branch names:
+
+```text
+feature/<capability>
+fix/<issue>
+docs/<topic>
+```
+
+## Testing
+
+Each backend service contains its own tests. The Maven wrapper is available in the services that provide local Maven wrapper scripts. The frontend uses the standard Next.js build command:
+
+```bash
+cd smartlogistic/ms-warehouse-core
+./mvnw test
+
+cd ../../../smartlogistic-web
+npm run build
+```
+
+## Unreal Engine Simulation
+
+Open `Simulation/Simulation.uproject` with Unreal Engine 5.7. The simulation builds the warehouse environment, receives robot commands through RabbitMQ Web STOMP, and publishes telemetry through the robot-status service.
+
+## Configuration and Security
+
+- Never commit `.env` or other local environment files.
+- Replace all values in `.env.example` before using the stack outside local development.
+- Do not expose database or administration ports on an untrusted network.
+- Restrict CORS and protect SSE endpoints before deploying publicly.
+- Pin and review container image versions for production use.
 
 ## License
 
